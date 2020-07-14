@@ -6,7 +6,6 @@ from prettytable import PrettyTable
 from colorama import Fore, Back, Style
 
 convert_choice='USD'
-sort_choice='market_cap'
 
 global_url ='https://pro-api.coinmarketcap.com/v1/global-metrics/quotes/latest'
 listing_url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
@@ -42,6 +41,7 @@ while True:
     print("2. Top 100 sorted by 24H change.")
     print("3. Top 100 sorted by 24H volume.")
     print("0. Exit")
+    print()
 
     menu_choice = input("Choose one to explore (1~3 or 0):")
 
@@ -69,42 +69,63 @@ while True:
     data_listing = results_listing['data']
 
     table = PrettyTable(['Rank', 'Asset', 'Price', 'Market Cap', 'Volume', '1H', '24H', '7D'])
+    table.align['Price'] = 'r'
+    table.align['Market Cap'] = 'r'
+    table.align['Volume'] = 'r'
+    table.align['1H'] = 'r'
+    table.align['24H'] = 'r'
+    table.align['7D'] = 'r'
     
     for currency in data_listing:
         rank = currency['cmc_rank']
         name = currency['name']
         symbol = currency['symbol']
         quotes = currency['quote'][convert_choice]
+        price = quotes['price']
         market_cap = quotes['market_cap']
         volume_24h = quotes['volume_24h']
         percent_change_1h = quotes['percent_change_1h']
         percent_change_24h = quotes['percent_change_24h']
         percent_change_7d = quotes['percent_change_7d']
-        price = quotes['price']
+        
+        if market_cap is not None:
+            market_cap_string = format(int(market_cap), ',')
+        
+        if volume_24h is not None:
+             value_string = format(int(volume_24h), ',')
+        
 
-        if percent_change_1h > 0:
-            percent_change_1h = Back.RED + str(percent_change_1h) + '%' + Style.RESET_ALL
-        else:
-            percent_change_1h = Back.GREEN + str(percent_change_1h) + '%' + Style.RESET_ALL
+        if percent_change_1h is not None:
+            percent_change_1h = round(quotes['percent_change_1h'], 3)
 
-        if percent_change_24h > 0:
-            percent_change_24h = Back.RED + str(percent_change_24h) + '%' + Style.RESET_ALL
-        else:
-            percent_change_24h = Back.GREEN + str(percent_change_24h) + '%' + Style.RESET_ALL
+            if percent_change_1h > 0:
+                percent_change_1h = Back.RED + str(percent_change_1h) + '%' + Style.RESET_ALL
+            else:
+                percent_change_1h = Back.GREEN + str(percent_change_1h) + '%' + Style.RESET_ALL
 
-        if percent_change_7d > 0:
-            percent_change_7d = Back.RED + str(percent_change_7d) + '%' + Style.RESET_ALL
-        else:
-            percent_change_7d = Back.GREEN + str(percent_change_7d) + '%' + Style.RESET_ALL
+        if percent_change_24h is not None:
+            percent_change_24h = round(quotes['percent_change_24h'], 3)
 
-        market_cap_string = '{:,}'.format(market_cap)
-        value_string = '{:,}'.format(volume_24h)
+            if percent_change_24h > 0:
+                percent_change_24h = Back.RED + str(percent_change_24h) + '%' + Style.RESET_ALL
+            else:
+                percent_change_24h = Back.GREEN + str(percent_change_24h) + '%' + Style.RESET_ALL
+
+        if percent_change_7d is not None:
+            percent_change_7d = round(quotes['percent_change_7d'], 3)
+
+            if percent_change_7d > 0:
+                percent_change_7d = Back.RED + str(percent_change_7d) + '%' + Style.RESET_ALL
+            else:
+                percent_change_7d = Back.GREEN + str(percent_change_7d) + '%' + Style.RESET_ALL
+
+        
 
         table.add_row([rank,
                     name + '(' + symbol + ')',
-                    '$' + str(price),
-                    '$' + market_cap_string,
-                    '$' + value_string,     
+                    '$' + str(round(price, 3)),
+                    '$' + str(market_cap_string),
+                    '$' + str(value_string),     
                     str(percent_change_1h),
                     str(percent_change_24h),
                     str(percent_change_7d)])
