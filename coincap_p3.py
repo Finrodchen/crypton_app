@@ -37,9 +37,9 @@ while True:
     print()
     print("The cryptoncurrency global market cap is $" + global_cap_string + " in " + convert_choice + ", last updated at " + global_cap_update + ".")
     print()
-    print("1. Top 100 sorted by rank.")
-    print("2. Top 100 sorted by 24H change.")
-    print("3. Top 100 sorted by 24H volume.")
+    print("1. Top 10 sorted by rank.")
+    print("2. Top 10 sorted by 24H change.")
+    print("3. Top 10 sorted by 24H volume.")
     print("0. Exit")
     print()
 
@@ -132,6 +132,8 @@ while True:
         
     print()
     print(table)
+    print("The cryptoncurrency caculated in " + convert_choice + ", last updated at " + global_cap_update + ".")
+    print()
 
     choice = input("Again? (y/n)")
 
